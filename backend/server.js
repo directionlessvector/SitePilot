@@ -5,12 +5,20 @@ import cors from "cors"
 
 import authRoutes from "./routes/authRoutes.js"
 
+import websiteRoutes from "./routes/websiteRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
+
+import pageRoutes from "./routes/pageRoutes.js"
+
 dotenv.config()
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use("/api/websites", websiteRoutes)
+app.use("/api/users", userRoutes)
+app.use("/api/pages", pageRoutes)
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
