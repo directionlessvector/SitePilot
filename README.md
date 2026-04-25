@@ -40,3 +40,13 @@ curl -X POST http://localhost:5000/api/pages \
   "websiteId": "69ec8b689ac3824f0c3d7260",
   "isHomepage": true
 }'
+
+
+
+curl -X POST http://localhost:5000/api/ai/generate \
+-H "Content-Type: application/json" \
+-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWVjODZlZDViNTg1MWMxMDY5YjhiNDQiLCJ0ZW5hbnRJZCI6IjY5ZWM4NmVkNWI1ODUxYzEwNjliOGI0MyIsInJvbGUiOiJvd25lciIsImlhdCI6MTc3NzEwOTc2NiwiZXhwIjoxNzc3NzE0NTY2fQ.2CS8nmqHYKDrOg86z-41gxeag81pV9lcPzWOecTRFns" \
+-d '{
+  "pageId": "69ec9141af1be7bfc6f58178",
+  "prompt": "Create a modern gym homepage with hero, services, and contact section"
+}'
