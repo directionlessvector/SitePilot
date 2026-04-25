@@ -1,7 +1,7 @@
 import User from "../models/User.js"
 import Tenant from "../models/Tenant.js"
 import bcrypt from "bcrypt"
-import generateToken from "../middleware/utils/generateToken.js"
+import generateToken from "../utils/generateToken.js"
 
 // REGISTER
 export const register = async (req, res) => {
