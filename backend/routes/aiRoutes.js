@@ -18,8 +18,9 @@ import {
   improveExistingContent,
   regenerateSection,
 } from "../controllers/aiController.js";
-
+import { aiLimiter } from "../middleware/rateLimit.js";
 const router = express.Router();
+router.use(aiLimiter);
 
 // ─── Rate limiter: max 20 AI requests per 15 minutes per IP ─────────────────
 // This is a second line of defence — plan limits are enforced server-side too.

@@ -4,8 +4,11 @@ import authorizeRoles from "../middleware/roleMiddleware.js"
 
 import {
   createWebsite,
-  getWebsites
-} from "../controllers/websiteController.js"
+  getWebsites,
+  publishWebsite,
+  getDeployments,
+  deleteWebsite
+} from "../controllers/websiteController.js";
 
 const router = express.Router()
 
@@ -21,5 +24,22 @@ router.get(
   protect,
   getWebsites
 )
-
+router.post(
+  "/:id/publish",
+  protect,
+  authorizeRoles("owner", "admin"),
+  publishWebsite
+)
+router.get(
+  "/:id/deployments",
+  protect,
+  authorizeRoles("owner", "admin"),
+  getDeployments
+);
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("owner"),
+  deleteWebsite
+);
 export default router

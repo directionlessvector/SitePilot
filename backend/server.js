@@ -16,7 +16,9 @@ import userRoutes from "./routes/userRoutes.js"
 
 import pageRoutes from "./routes/pageRoutes.js"
 import aiRoutes from "./routes/aiRoutes.js"
-
+import publicRoutes from "./routes/publicRoutes.js"
+import analyticsRoutes from "./routes/analyticsRoutes.js";
+import tenantRoutes from "./routes/tenantRoutes.js";
 const app = express()
 app.use(cors())
 app.use(express.json())
@@ -24,7 +26,9 @@ app.use("/api/websites", websiteRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/pages", pageRoutes)
 app.use("/api/ai", aiRoutes)
-
+app.use("/api/public", publicRoutes)
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/tenant", tenantRoutes);
 // DB Connection
 mongoose.connect(process.env.MONGO_URI, {
   dbName: "sitepilot"

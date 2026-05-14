@@ -75,3 +75,131 @@ export const createPage = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+export const updatePage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, draftContent } = req.body;
+
+    const page = await Page.findOne({
+      _id: id,
+      tenantId: req.user.tenantId,
+    });
+
+    if (!page) {
+      return res.status(404).json({
+        message: "Page not found",
+      });
+    }
+
+    if (title) {
+      page.title = title;
+    }
+
+    if (draftContent) {
+      if (!Array.isArray(draftContent)) {
+        return res.status(400).json({
+          message: "draftContent must be an array",
+        });
+      }
+
+      page.draftContent = draftContent;
+    }
+
+    await page.save();
+
+    res.json({
+      message: "Page updated successfully",
+      page,
+    });
+  } catch (error) {
+    console.error("Update page error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+export const getPages = async (req, res) => {
+  try {
+    const { websiteId } = req.params;
+
+    const pages = await Page.find({
+      websiteId,
+      tenantId: req.user.tenantId,
+    }).sort({ order: 1 });
+
+    res.json({
+      pages,
+    });
+  } catch (error) {
+    console.error("Get pages error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+export const getPageById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const page = await Page.findOne({
+      _id: id,
+      tenantId: req.user.tenantId,
+    });
+
+    if (!page) {
+      return res.status(404).json({
+        message: "Page not found",
+      });
+    }
+
+    res.json({
+      page,
+    });
+  } catch (error) {
+    console.error("Get page error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+export const deletePage = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const page = await Page.findOne({
+      _id: id,
+      tenantId: req.user.tenantId,
+    });
+
+    if (!page) {
+      return res.status(404).json({
+        message: "Page not found",
+      });
+    }
+
+    // Prevent homepage deletion
+    if (page.isHomepage) {
+      return res.status(400).json({
+        message: "Homepage cannot be deleted",
+      });
+    }
+
+    await Page.deleteOne({
+      _id: id,
+      tenantId: req.user.tenantId,
+    });
+
+    res.json({
+      message: "Page deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete page error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
