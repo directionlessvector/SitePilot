@@ -12,7 +12,7 @@
 
 import express from "express";
 import rateLimit from "express-rate-limit";
-import authenticate from "../middleware/authenticate.js";
+import protect from "../middleware/authMiddleware.js"
 import {
   generatePageContent,
   improveExistingContent,
@@ -35,7 +35,7 @@ const aiRateLimiter = rateLimit({
 });
 
 // ─── Apply auth + rate limit to all AI routes ────────────────────────────────
-router.use(authenticate);
+router.use(protect);
 router.use(aiRateLimiter);
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
