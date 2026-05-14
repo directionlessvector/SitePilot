@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 const pageSchema = new mongoose.Schema({
   tenantId: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    index: true
+    required: true
   },
   websiteId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -41,10 +40,8 @@ const pageSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Compound unique index for slug per website
+// ✅ Keep ONLY these indexes
 pageSchema.index({ websiteId: 1, slug: 1 }, { unique: true });
-
-// Index for tenant isolation
 pageSchema.index({ tenantId: 1 });
 
 const Page = mongoose.model('Page', pageSchema);

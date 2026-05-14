@@ -1,4 +1,6 @@
 import Website from "../models/Website.js"
+import Tenant from "../models/Tenant.js"
+import { checkWebsiteLimit } from "../services/planService.js"
 
 // helper to generate slug
 const generateSlug = (name) => {
@@ -20,7 +22,12 @@ export const createWebsite = async (req, res) => {
 
     const slug = generateSlug(name)
 
-    // optional: prevent duplicate slug per tenant
+    // 🔥 get tenant for plan check
+    const tenant = await Tenant.findById(req.user.tenantId)
+
+    // 🔥 enforce plan limit
+    await checkWebsiteLimit(req.user.tenantId, tenant.plan)
+
     const existing = await Website.findOne({
       tenantId: req.user.tenantId,
       slug
@@ -32,7 +39,7 @@ export const createWebsite = async (req, res) => {
 
     const website = await Website.create({
       name,
-      slug, // ✅ FIX
+      slug,
       tenantId: req.user.tenantId
     })
 
@@ -45,11 +52,13 @@ export const createWebsite = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+
+// GET WEBSITES
 export const getWebsites = async (req, res) => {
   try {
     const websites = await Website.find({
       tenantId: req.user.tenantId
-    })
+    }).sort({ createdAt: -1 })
 
     res.json(websites)
 

@@ -5,7 +5,6 @@ import { addMember } from "../controllers/userController.js"
 
 const router = express.Router()
 
-// only owner can add members
 router.post("/", protect, authorizeRoles("owner"), addMember)
 
 export default router

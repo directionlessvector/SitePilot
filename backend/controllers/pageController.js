@@ -1,4 +1,7 @@
 import Page from "../models/Page.js"
+import Website from "../models/Website.js"
+import Tenant from "../models/Tenant.js"
+import { checkPageLimit } from "../services/planService.js"
 
 // helper to generate slug
 const generateSlug = (title) => {
@@ -18,11 +21,26 @@ export const createPage = async (req, res) => {
       return res.status(400).json({ message: "Title and websiteId required" })
     }
 
+    // 🔥 1) VERIFY WEBSITE BELONGS TO TENANT
+    const website = await Website.findOne({
+      _id: websiteId,
+      tenantId: req.user.tenantId
+    })
+
+    if (!website) {
+      return res.status(404).json({ message: "Website not found" })
+    }
+
+    // 🔥 2) PLAN LIMIT CHECK
+    const tenant = await Tenant.findById(req.user.tenantId)
+    await checkPageLimit(req.user.tenantId, websiteId, tenant.plan)
+
     const slug = generateSlug(title)
 
-    // check duplicate slug inside same website
+    // 🔥 3) DUPLICATE CHECK WITH TENANT ISOLATION
     const existing = await Page.findOne({
       websiteId,
+      tenantId: req.user.tenantId,
       slug
     })
 
@@ -30,10 +48,10 @@ export const createPage = async (req, res) => {
       return res.status(400).json({ message: "Page already exists with this title" })
     }
 
-    // if homepage → unset previous homepage
+    // 🔥 4) HOMEPAGE UPDATE (SCOPED)
     if (isHomepage) {
       await Page.updateMany(
-        { websiteId },
+        { websiteId, tenantId: req.user.tenantId },
         { isHomepage: false }
       )
     }

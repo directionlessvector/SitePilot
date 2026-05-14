@@ -1,8 +1,12 @@
+import "./config/env.js";   // 🔥 MUST BE FIRST LINE
+
+
 import express from "express"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cors from "cors"
 dotenv.config()
+console.log("ENV CHECK:", process.env.OPENAI_API_KEY)
 
 import authRoutes from "./routes/authRoutes.js"
 
@@ -22,10 +26,14 @@ app.use("/api/pages", pageRoutes)
 app.use("/api/ai", aiRoutes)
 
 // DB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err))
-
+mongoose.connect(process.env.MONGO_URI, {
+  dbName: "sitepilot"
+})
+.then(() => {
+  console.log("MongoDB connected")
+  console.log("DB NAME:", mongoose.connection.name)
+})
+.catch(err => console.log(err))
 // Routes
 app.use("/api/auth", authRoutes)
 
